@@ -1,7 +1,12 @@
-FROM golang:1.7-alpine
+FROM golang:1.14 as oven
 
-ADD main.go /usr/src/amwhex/
-WORKDIR /usr/src/amwhex
+ADD main.go /usr/src/amecho/
+WORKDIR /usr/src/amecho
 
 RUN go build
-CMD /usr/src/amwhex/amwhex
+
+FROM ubuntu:18.04
+COPY --from=oven /usr/src/amecho/amecho /amecho
+COPY --from=oven /usr/src/amecho/main.go /
+WORKDIR /
+ENTRYPOINT [ "/amecho" ]
